@@ -1,0 +1,250 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>甜甜屋</title>
+<link href="jquery-mobile/jquery.mobile.theme-1.3.0.min.css" rel="stylesheet" type="text/css">
+<link href="jquery-mobile/jquery.mobile.structure-1.3.0.min.css" rel="stylesheet" type="text/css">
+<script src="jquery-mobile/jquery-1.11.1.min.js" type="text/javascript"></script>
+<script src="jquery-mobile/jquery.mobile-1.3.0.min.js" type="text/javascript"></script>
+<script>
+//pagecreate頁面建立時觸發  pageinit頁面(第一次)載入時執行   pageshow頁面(每次)載入時執行
+$(document).on("pagecreate","#order",function(){
+	//下拉選單
+	$('#promenu').change(function(){
+		switch(parseInt($(this).val())){
+			case 1:
+				$('#p1').css('display','block');
+				$('#p2').css('display','block');
+				$('#p3').css('display','block');
+				break;
+			case 2:
+				$('#p1').css('display','block');
+				$('#p2').css('display','none');
+				$('#p3').css('display','none');
+				break;
+			case 3:
+				$('#p1').css('display','none');
+				$('#p2').css('display','block');
+				$('#p3').css('display','none');
+				break;
+			case 4:
+				$('#p1').css('display','none');
+				$('#p2').css('display','none');
+				$('#p3').css('display','block');
+				break;
+		}
+	});
+	
+	//送出按鈕
+	$('#send').click(function(){
+		//取得產品勾選項目
+		proselect=$('.custom:checked').map(function(){
+			return $(this).val();	
+		}).toArray();
+		//取得數量
+		num=$('input[name="slider"]').map(function() {
+            return parseInt($(this).val());
+        }).toArray();
+		//篩選數量大於0
+		numok=$.grep(num,function(value){
+			return value>0;
+		});		
+		//產品價格
+		price=[60,55,55,50,40,65,32,75,32,28,28,28];
+		//計算總和
+		var sum=0;
+		for(var i=0;i<price.length;i++){
+			sum+=(price[i]*num[i]);
+		}
+		
+		//儲存各項資料
+		window.localStorage.total=sum;//總和
+		window.localStorage.ordernum=numok.length;//訂購筆數
+		window.localStorage.name=$('#name').val();//姓名
+		window.localStorage.tel=$('#tel').val();//電話
+		window.localStorage.email=$('#email').val();//電子郵件
+		window.localStorage.add=$('#add').val();//地址
+		window.localStorage.setItem("product",JSON.stringify(proselect));//勾選產品
+		window.localStorage.setItem("pronum",JSON.stringify(numok));//數量		
+		pro=JSON.parse(window.localStorage.getItem("product"));
+		prn=JSON.parse(window.localStorage.getItem("pronum"));
+		
+		
+		//判斷表單欄位是否填入
+		if(!$('#name').val())
+			alert('請輸入姓名');
+		else if(!$('#tel').val())
+			alert('請輸入電話');
+		else if(!$('#email').val())
+			alert('請輸入電子郵件');
+		else if(!$('#add').val())
+			alert('請輸入地址');
+		else{
+			alert(window.localStorage.name+'您好!\n感謝您的訂購');
+			window.location.assign('#orderok');
+		}			
+	});
+});
+
+//訂購完成顯示頁面
+$(document).on("pageinit","#orderok",function(){
+	//輸入到message  DIV區塊中
+	var msg=window.localStorage.name+'您好<br/>您訂購的商品如下:<br/>';
+	for(var i=0;i<numok.length;i++){		
+			msg=msg+pro[i]+" "+prn[i]+"個<br/>";
+	}
+	msg=msg+"總計:"+window.localStorage.total+"元";
+	$('#message').html(msg);
+});
+</script>
+</head>
+
+<body>
+<!--第一頁-->
+<div data-role="page" id="home">
+  <div data-role="header" data-position="fixed">
+    <h1>甜甜屋</h1>
+  </div>
+  <div data-role="content">
+    <ul data-role="listview" data-inset="true" data-filter="true">
+      <li data-role="list-divider">蛋糕</li>
+      <li><a href="#order"><img src="images/c01.jpg" alt=""/>
+      <h3>水果巧克杯</h3><span class="ui-li-count">$60</span><p>豐富的巧克力層次口感，放上酸甜可口的水果，讓人隨手一杯幸福滿分。</p></a></li>
+      <li><a href="#order"><img src="images/c02.jpg" alt=""/>
+      <h3>草莓慕斯杯</h3><span class="ui-li-count">$55</span><p>香草蛋糕夾入草莓慕斯和香堤鮮奶油，在用新鮮的草莓點綴其上，一口咬下在嘴裡綻放美味。</p></a></li>
+      <li><a href="#order"><img src="images/c03.jpg" alt=""/><h3>草莓蒙布朗</h3><span class="ui-li-count">$55</span><p>香草戚風蛋糕加上草莓慕斯及香草慕斯散發出淡淡的草莓香，再加上草莓果餡層次變化豐富。</p></a></li>
+      <li><a href="#order"><img src="images/c04.jpg" alt=""/><h3>皇家黑爵士</h3><span class="ui-li-count">$50</span><p>滿覆的巧克力慕斯，搭配歐力歐餅乾屑，多層次的口感在口中層疊交錯，濃郁又經典的巧克力蛋糕。</p></a></li>
+      <li><a href="#order"><img src="images/c05.jpg" alt=""/><h3>特級波士頓</h3><span class="ui-li-count">$40</span><p>改良式的內餡，綿密細緻的口感，不同口感的牛奶蛋糕體，不同風味的波士頓派。</p></a></li>
+      <li><a href="#order"><img src="images/c06.jpg" alt=""/><h3>法式千層</h3><span class="ui-li-count">$65</span><p>法式煎薄餅加上白蘭地醬，呈現道地的法式美味及口感。</p></a></li>
+      <li data-role="list-divider">麵包</li>
+      <li><a href="#order"><img src="images/b01.jpg" alt=""/><h3>法式烤布蕾</h3><span class="ui-li-count">$32</span><p>層層酥香的丹麥麵包，搭配著焦糖烤布蕾餡，豐富的層次感。</p></a></li>
+      <li><a href="#order"><img src="images/b02.jpg" alt=""/><h3>北海道牛奶吐司</h3><span class="ui-li-count">$75</span><p>香酥的丹麥帶著外酥內軟的口感，有著濃濃香純的奶油香。</p></a></li>
+      <li><a href="#order"><img src="images/b03.jpg" alt=""/><h3>丹麥椰子奶酥菠蘿</h3><span class="ui-li-count">$32</span><p>柔軟的丹麥麵包，覆蓋金黃酥脆條紋菠蘿皮，內層含有香濃椰子奶酥餡。</p></a></li>
+      <li><a href="#order"><img src="images/b04.jpg" alt=""/><h3>香蒜菠蘿小吐司</h3><span class="ui-li-count">$28</span><p>丹麥麵包，覆蓋著鹹酥的香蒜菠蘿皮，順口的好滋味。</p></a></li>
+      <li data-role="list-divider">三明治</li>
+      <li><a href="#order"><img src="images/s01.jpg" alt=""/><h3>起士三明治</h3><span class="ui-li-count">$28</span><p>柔軟的鮮奶吐司，搭配特製起士片及香軟蛋皮，清新的口感。</p></a></li>
+      <li><a href="#order"><img src="images/s02.jpg" alt=""/><h3>火腿三明治</h3><span class="ui-li-count">$28</span><p>超綿密鮮奶吐司，加上特製煙燻火腿及香軟蛋皮，口感清爽且超低熱量。</p></a></li>
+    </ul>
+  
+  
+  </div>
+  <div data-role="footer" data-position="fixed">
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#" data-icon="home" data-ajax="false" class="ui-btn-active">首頁</a></li>
+        <li><a href="index-2.html" data-icon="grid" data-ajax="false">查詢</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<!--第二頁-->
+<div data-role="page" id="order">
+  <div data-role="header" data-position="fixed">
+  	<a href="#home" data-icon="back" data-inline="true" data-ajax="false">返回</a>
+	<h1>甜甜屋-產品訂購</h1>
+  </div>
+  <div data-role="content">
+  	<!--表單資料-->
+    <div data-role="fieldcontain">
+      <label for="name">姓名:</label>
+      <input name="name" type="text" required id="name" value=""  />
+      <label for="tel">電話:</label>
+      <input name="tel" type="tel" required id="tel">
+      <label for="email">電子郵件:</label>
+      <input name="email" type="email" required id="email">
+      <label for="add">地址:</label>
+      <input name="add" type="text" required id="add">
+      <label for="promenu">產品:</label>
+      <select name="promenu" id="promenu">
+        <option value="1" selected>全部</option>
+        <option value="2">蛋糕</option>
+        <option value="3">麵包</option>
+        <option value="4">三明治</option>
+      </select>
+    </div>
+  	<!--產品內容-->
+    <fieldset id="p1">
+      <input name="pro" type="checkbox" id="pro1" value="水果巧克杯" class="custom">
+      <label for="pro1">水果巧克杯</label>
+      <input name="slider" type="range" max="100" min="0" value="0">
+      
+      <input name="pro" type="checkbox" id="pro2" value="草莓慕斯杯" class="custom">
+      <label for="pro2">草莓慕斯杯</label>
+      <input name="slider" type="range" max="100" min="0" value="0">
+      
+      <input name="pro" type="checkbox" id="pro3" value="草莓蒙布朗" class="custom">
+      <label for="pro3">草莓蒙布朗</label>
+      <input name="slider" type="range" max="100" min="0" value="0">
+      
+      <input name="pro" type="checkbox" id="pro4" value="皇家黑爵士" class="custom">
+      <label for="pro4">皇家黑爵士</label>
+      <input name="slider" type="range" max="100" min="0" value="0">
+      
+      <input name="pro" type="checkbox" id="pro5" value="特級波士頓" class="custom">
+      <label for="pro5">特級波士頓</label>
+      <input name="slider" type="range" max="100" min="0" value="0">
+      
+      <input name="pro" type="checkbox" id="pro6" value="法式千層" class="custom">
+      <label for="pro6">法式千層</label>
+      <input name="slider" type="range" max="100" min="0" value="0">
+    </fieldset>
+    
+    <fieldset id="p2">
+      <input name="pro" type="checkbox" id="pro7" value="法式烤布蕾" class="custom">
+      <label for="pro7">法式烤布蕾 </label>
+      <input name="slider" type="range" max="100" min="0" value="0">
+      
+      <input name="pro" type="checkbox" id="pro8" value="北海道牛奶吐司" class="custom">
+      <label for="pro8">北海道牛奶吐司 </label>
+      <input name="slider" type="range" max="100" min="0" value="0">
+      
+      <input name="pro" type="checkbox" id="pro9" value="丹麥椰子奶酥菠蘿" class="custom">
+      <label for="pro9">丹麥椰子奶酥菠蘿 </label>
+      <input name="slider" type="range" max="100" min="0" value="0">
+      
+      <input name="pro" type="checkbox" id="pro10" value="香蒜菠蘿小吐司" class="custom">
+      <label for="pro10">香蒜菠蘿小吐司 </label>
+      <input name="slider" type="range" max="100" min="0" value="0">
+    </fieldset>
+    
+    <fieldset id="p3">
+      <input name="pro" type="checkbox" id="pro11" value="起士三明治" class="custom">
+      <label for="pro11">起士三明治 </label>
+      <input name="slider" type="range" max="100" min="0" value="0">
+      
+      <input name="pro" type="checkbox" id="pro12" value="火腿三明治" class="custom">
+      <label for="pro12">火腿三明治 </label>
+      <input name="slider" type="range" max="100" min="0" value="0">      
+    </fieldset>
+  	<a href="#" data-role="button" id="send">訂購</a> 
+  </div>
+  <div data-role="footer" data-position="fixed">
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#home" data-icon="home" data-ajax="false">首頁</a></li>
+        <li><a href="index-2.html" data-icon="grid" data-ajax="false">查詢</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<!--第三頁-->
+<div data-role="page" id="orderok">
+  <div data-role="header" data-position="fixed">
+  	<a href="#home" data-icon="back" data-inline="true" data-ajax="false">返回</a>
+	<h1>甜甜屋-訂購完成</h1>
+  </div>
+  <div data-role="content">
+  	<div id="message"></div>
+  </div>
+  <div data-role="footer" data-position="fixed">
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#home" data-icon="home" data-ajax="false">首頁</a></li>
+        <li><a href="index-2.html" data-icon="grid" data-ajax="false">查詢</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>
